@@ -1,34 +1,69 @@
-<?php 
-    require 'config.php';
-    include 'crud.php';
+<?php
 
-    // traitement du formulaire
-    if($_SERVER['REQUEST_METHOD'] === 'POST'){    
-        // traitement formulaire 
-        $userId = $_POST['$userId'] ?? null;
-        $userName = $_POST['$userName'] ?? null;
-        $userEmail = $_POST['$userEmail'] ?? null;
-        $password = $_POST['$password'] ?? null;
-        
+// Inclure le fichier de configuration et les fonctions CRUD
+require 'config.php';
+include 'crud.php';
 
-      if(isset($_POST['create'] && $userId)) {
-        // creer un nouvel utilisateur
-        createUser($_POST['$userId'], $_POST['userName'], $_POST['userEmail'], $_POST['password']);
+// Traitement du formulaire d'ajout d'utilisateur
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    if (isset($_POST['createUser'])) {
+        // Assurer que les champs requis sont présents dans le formulaire
+        if (
+            isset($_POST['firstName'], $_POST['lastName'], $_POST['age'], $_POST['job'], $_POST['userEmail'], $_POST['password'])
+        ) {
+            // Filtrer et sécuriser les entrées du formulaire
+            $firstName = filter_var($_POST['firstName'], );
+            $lastName = filter_var($_POST['lastName'], );
+            $age = filter_var($_POST['age'], );
+            $job = filter_var($_POST['job'], );
+            $userEmail = filter_var($_POST['userEmail'], );
+            $password = $_POST['password']; // Le mot de passe peut être laissé tel quel, car il sera haché dans la fonction createUser
 
-      }
-    }elseif(isset($_POST['read'])){
-        // Lire les données du user 
-        $userId = $_POST['userId'];
-        $getUserData = readUser($userId);
-        echo "<p> donnée de l\'utilisateur" . print_r($getUserData, true);
-    }elseif(isset($_POST['delete'])){
-        // supprimer utilisateur
-        $userId = $_POST['userId'];
-        deleteUser($userId);
+            // Générer un identifiant unique pour l'utilisateur
+            $userId = uniqid();
+
+            // Appeler la fonction createUser en passant les données filtrées
+            createUser($userId, $firstName, $lastName, $age, $job, $userEmail, $password);
+        } else {
+            echo "Erreur : Certains champs du formulaire sont manquants.";
+        }
     }
+}
 
-    //   if (isset($_POST['userId'], $_POST['userName'], $_POST['userEmail'], $_POST['password']);
+// Traitement du formulaire de mise à jour d'utilisateur
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    if (isset($_POST['updateUser'])) {
+        // Assurer que les champs requis sont présents dans le formulaire
+        if (isset($_POST['updateUserId'], $_POST['newFirstName'], $_POST['newLastName'], $_POST['newAge'], $_POST['newJob'], $_POST['newEmail'])) {
+            // Filtrer et sécuriser les entrées du formulaire
+            $userId = filter_var($_POST['updateUserId'], );
+            $newFirstName = filter_var($_POST['newFirstName'], );
+            $newLastName = filter_var($_POST['newLastName'], );
+            $newAge = filter_var($_POST['newAge'], );
+            $newJob = filter_var($_POST['newJob'], );
+            $newEmail = filter_var($_POST['newEmail'], );
 
+            // Appeler la fonction updateUser en passant les données filtrées
+            updateUser($userId, $newFirstName, $newLastName, $newAge, $newJob, $newEmail);
+        } else {
+            echo "Erreur : Certains champs du formulaire de mise à jour sont manquants.";
+        }
+    }
+}
 
+// Traitement du formulaire de suppression d'utilisateur
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    if (isset($_POST['deleteUser'])) {
+        // Assurer que le champ requis est présent dans le formulaire
+        if (isset($_POST['deleteUserId'])) {
+            // Filtrer et sécuriser l'entrée du formulaire
+            $userId = filter_var($_POST['deleteUserId'], );
 
+            // Appeler la fonction deleteUser en passant l'ID filtré
+            deleteUser($userId);
+        } else {
+            echo "Erreur : Champ de suppression d'utilisateur manquant.";
+        }
+    }
+}
 ?>

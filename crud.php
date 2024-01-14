@@ -1,51 +1,111 @@
 <?php
+
 require 'config.php';
 
-
-// RAJOUTER UN TRY CATCH 
-// Créer un nouvel utilisateur 
-
-function createUser($userId, $userName, $userEmail, $password) {
+// Créer un nouvel utilisateur de manière sécurisée
+function createUser($userId, $firstName, $lastName, $age, $job, $userEmail, $password) {
     global $redis;
-    $userKey = "user:$userId";
-    
-    // Hash du mot de passe 
-    $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
 
-    // données utilisateur 
-    $userData = [
-        'id' => $userId,
-        'name' => $userName,
-        'email' => $userEmail,
-        'password' => $userPassword,
-    ];
+    try {
+        $userKey = "utilisateurs:$userId"; // Clé de l'utilisateur dans la base de données "utilisateurs"
 
-    $redis->hMset($userKey, $userData);
+        // Hash du mot de passe
+        $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
+
+        // Données utilisateur
+        $userData = [
+            'id' => $userId,
+            'first_name' => $firstName,
+            'last_name' => $lastName,
+            'age' => $age,
+            'job' => $job,
+            'email' => $userEmail,
+            'password' => $hashedPassword,
+        ];
+
+        // Enregistrement des données dans Redis
+        $redis->hMset($userKey, $userData);
+        echo "Utilisateur créé avec succès!";
+    } catch (Exception $e) {
+        echo "Erreur lors de la création de l'utilisateur : " . $e->getMessage();
+    }
 }
 
-// Lire les données utilisateur 
-function readUser($userId){
+// Lire les données utilisateur de manière sécurisée
+function readUser($userId) {
     global $redis;
-    $userKey = "user:$userId";
-    return $redis;
+
+    try {
+        $userKey = "utilisateurs:$userId"; // Clé de l'utilisateur dans la base de données "utilisateurs"
+        $userData = $redis->hGetAll($userKey);
+
+        if (!empty($userData)) {
+            return $userData;
+        } else {
+            throw new Exception("Utilisateur non trouvé.");
+        }
+    } catch (Exception $e) {
+        echo "Erreur lors de la lecture des données de l'utilisateur : " . $e->getMessage();
+        return [];
+    }
 }
-// Mettre à jour les données utilisateur 
-function updateUser($userId, $newName, $newEmail){
+
+// Afficher tous les utilisateurs
+function getAllUsers() {
     global $redis;
-    $userData = [
-        'name' => $newName,
-        'email' => newEmail,
 
-    ];
-$redis->hMset($userKey, $userData);
+    $userList = [];
 
-// Suprrimer un utilisateur 
-function deleteUser($userId){
+    try {
+        $keys = $redis->keys("utilisateurs:*");
 
+        foreach ($keys as $key) {
+            $userData = $redis->hGetAll($key);
+            $userList[] = $userData;
+        }
+
+        return $userList;
+    } catch (Exception $e) {
+        echo "Erreur lors de la récupération des utilisateurs : " . $e->getMessage();
+        return [];
+    }
+}
+
+// Mettre à jour les données utilisateur de manière sécurisée
+function updateUser($userId, $newFirstName, $newLastName, $newAge, $newJob, $newEmail) {
     global $redis;
-    $userKey = "user:$userId";
-    $redis->del($userKey);
-    
+
+    try {
+        $userKey = "utilisateurs:$userId"; // Clé de l'utilisateur dans la base de données "utilisateurs"
+
+        $userData = [
+            'first_name' => $newFirstName,
+            'last_name' => $newLastName,
+            'age' => $newAge,
+            'job' => $newJob,
+            'email' => $newEmail,
+        ];
+
+        // Mise à jour des données dans Redis
+        $redis->hMset($userKey, $userData);
+        echo "Données utilisateur mises à jour avec succès!";
+    } catch (Exception $e) {
+        echo "Erreur lors de la mise à jour des données de l'utilisateur : " . $e->getMessage();
+    }
+}
+
+// Supprimer un utilisateur de manière sécurisée
+function deleteUser($userId) {
+    global $redis;
+
+    try {
+        $userKey = "utilisateurs:$userId"; // Clé de l'utilisateur dans la base de données "utilisateurs"
+
+        // Suppression de l'utilisateur de Redis
+        $redis->del($userKey);
+        echo "Utilisateur supprimé avec succès!";
+    } catch (Exception $e) {
+        echo "Erreur lors de la suppression de l'utilisateur : " . $e->getMessage();
     }
 }
 
