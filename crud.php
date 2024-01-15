@@ -1,5 +1,5 @@
 <?php
-
+// crud.php
 require 'config.php';
 
 // Créer un nouvel utilisateur de manière sécurisée
@@ -25,9 +25,9 @@ function createUser($userId, $firstName, $lastName, $age, $job, $userEmail, $pas
 
         // Enregistrement des données dans Redis
         $redis->hMset($userKey, $userData);
-        echo "Utilisateur créé avec succès!";
+        return "Utilisateur créé avec succès!";
     } catch (Exception $e) {
-        echo "Erreur lors de la création de l'utilisateur : " . $e->getMessage();
+        return "Erreur lors de la création de l'utilisateur : " . $e->getMessage();
     }
 }
 
@@ -45,8 +45,7 @@ function readUser($userId) {
             throw new Exception("Utilisateur non trouvé.");
         }
     } catch (Exception $e) {
-        echo "Erreur lors de la lecture des données de l'utilisateur : " . $e->getMessage();
-        return [];
+        return "Erreur lors de la lecture des données de l'utilisateur : " . $e->getMessage();
     }
 }
 
@@ -66,8 +65,7 @@ function getAllUsers() {
 
         return $userList;
     } catch (Exception $e) {
-        echo "Erreur lors de la récupération des utilisateurs : " . $e->getMessage();
-        return [];
+        return "Erreur lors de la récupération des utilisateurs : " . $e->getMessage();
     }
 }
 
@@ -88,9 +86,9 @@ function updateUser($userId, $newFirstName, $newLastName, $newAge, $newJob, $new
 
         // Mise à jour des données dans Redis
         $redis->hMset($userKey, $userData);
-        echo "Données utilisateur mises à jour avec succès!";
+        return "Données utilisateur mises à jour avec succès!";
     } catch (Exception $e) {
-        echo "Erreur lors de la mise à jour des données de l'utilisateur : " . $e->getMessage();
+        return "Erreur lors de la mise à jour des données de l'utilisateur : " . $e->getMessage();
     }
 }
 
@@ -103,10 +101,9 @@ function deleteUser($userId) {
 
         // Suppression de l'utilisateur de Redis
         $redis->del($userKey);
-        echo "Utilisateur supprimé avec succès!";
+        return "Utilisateur supprimé avec succès!";
     } catch (Exception $e) {
-        echo "Erreur lors de la suppression de l'utilisateur : " . $e->getMessage();
+        return "Erreur lors de la suppression de l'utilisateur : " . $e->getMessage();
     }
 }
-
 ?>

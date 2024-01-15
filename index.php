@@ -1,16 +1,3 @@
-<?php
-
-require 'config.php';
-include 'crud.php';
-
-// Liste des utilisateurs existants
-$userList = getAllUsers();
-
-// Récupérer le message de la session
-$message = isset($_SESSION['message']) ? $_SESSION['message'] : '';
-unset($_SESSION['message']); // Effacer le message après utilisation
-
-?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -19,16 +6,30 @@ unset($_SESSION['message']); // Effacer le message après utilisation
     <title>Redis Crud App</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css"
           integrity="sha384-xOolHFLEh07PJGoPkLv1IbcEPTNtaed2xpHsD9ESMhqIYd0nLMwNLD69Npy4HI+N" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
 </head>
 <body>
 <main>
     <div class="container">
         <h1>Redis Crud App</h1>
+        <?php
+        require 'traitement.php';
+
+        // Liste des utilisateurs existants
+        $userList = getAllUsers();
+
+        // Récupérer le message de la session
+        $message = isset($_SESSION['message']) ? $_SESSION['message'] : '';
+        unset($_SESSION['message']); // Effacer le message après utilisation
+        ?>
+
         <?php if (!empty($message)): ?>
             <div class="alert <?php echo (strpos($message, 'Erreur') !== false) ? 'alert-danger' : 'alert-success'; ?>" role="alert">
                 <?php echo $message; ?>
             </div>
         <?php endif; ?>
+
         <form action="traitement.php" method="post" class="mb-4">
             <!-- Champs de formulaire ici (ex : nom, prénom, âge, métier, email, mot de passe) -->
             <div class="form-group">
@@ -75,21 +76,18 @@ unset($_SESSION['message']); // Effacer le message après utilisation
             <tbody>
             <?php foreach ($userList as $user): ?>
                 <tr>
-                    <th scope="row"><?php echo $user['id']; ?></th>
-                    <td><?php echo $user['first_name']; ?></td>
-                    <td><?php echo $user['last_name']; ?></td>
-                    <td><?php echo $user['age']; ?></td>
-                    <td><?php echo $user['job']; ?></td>
-                    <td><?php echo $user['email']; ?></td>
+                    <th scope="row"><?php echo htmlspecialchars($user['id']); ?></th>
+                    <td><?php echo htmlspecialchars($user['first_name']); ?></td>
+                    <td><?php echo htmlspecialchars($user['last_name']); ?></td>
+                    <td><?php echo htmlspecialchars($user['age']); ?></td>
+                    <td><?php echo htmlspecialchars($user['job']); ?></td>
+                    <td><?php echo htmlspecialchars($user['email']); ?></td>
                     <td>
                         <form action="traitement.php" method="post">
-                            <input type="hidden" name="deleteUserId" value="<?php echo $user['id']; ?>">
+                            <input type="hidden" name="deleteUserId" value="<?php echo htmlspecialchars($user['id']); ?>">
                             <button type="submit" class="btn btn-danger" name="deleteUser">Supprimer</button>
                         </form>
-                        <form action="update_user.php" method="post">
-                            <input type="hidden" name="updateUserId" value="<?php echo $user['id']; ?>">
-                            <button type="submit" class="btn btn-warning" name="updateUser">Modifier</button>
-                        </form>
+                        <a href="userUpdate.php?userId=<?php echo htmlspecialchars($user['id']); ?>" class="btn btn-warning">Modifier</a>
                     </td>
                 </tr>
             <?php endforeach; ?>

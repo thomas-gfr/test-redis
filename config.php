@@ -1,5 +1,5 @@
 <?php
-
+// config.php
 require 'vendor/autoload.php';
 
 // Configuration du serveur Redis
@@ -28,7 +28,7 @@ try {
         $redis->auth($redisConfig['password']);
     }
 
-    echo "Connexion à Redis réussie!";
+    echo "<button class='alert alert-secondary'> connexion à la base de donnée Redis Ok !</button>";
 } catch (Predis\Connection\ConnectionException $e) {
     // Gestion de l'erreur de connexion
     echo "Erreur de connexion à Redis : " . $e->getMessage();
@@ -39,5 +39,4 @@ try {
     // Gestion d'autres exceptions
     echo "Une erreur s'est produite : " . $e->getMessage();
 }
-
 ?>
