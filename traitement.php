@@ -1,5 +1,4 @@
 <?php
-// traitement.php
 require 'crud.php';
 
 // Traitement du formulaire d'ajout d'utilisateur
@@ -53,4 +52,32 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['deleteUser'])) {
         exit;
     }
 }
+
+// Fonction de traitement du formulaire de mise à jour de l'utilisateur
+function updateUserFormHandler($userId) {
+    // Assurer que les champs requis sont présents dans le formulaire
+    if (isset($_POST['newFirstName'], $_POST['newLastName'], $_POST['newAge'], $_POST['newJob'], $_POST['newEmail'])) {
+        // Filtrer et sécuriser les entrées du formulaire
+        $newFirstName = filter_var($_POST['newFirstName'], FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+        $newLastName = filter_var($_POST['newLastName'], FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+        $newAge = filter_var($_POST['newAge'], FILTER_SANITIZE_NUMBER_INT);
+        $newJob = filter_var($_POST['newJob'], FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+        $newEmail = filter_var($_POST['newEmail'], FILTER_SANITIZE_EMAIL);
+
+        // Vérifier si le champ de nouveau mot de passe est présent
+        $newPassword = isset($_POST['newPassword']) ? $_POST['newPassword'] : null;
+
+        // Appeler la fonction updateUser en passant les données filtrées
+        updateUser($userId, $newFirstName, $newLastName, $newAge, $newJob, $newEmail, $newPassword);
+
+        // Rediriger vers la page d'accueil avec un message de succès
+        $_SESSION['message'] = 'Données utilisateur mises à jour avec succès!';
+        header('Location: index.php');
+        exit;
+    } else {
+        // Message d'erreur si des champs requis sont manquants
+        echo '<div class="alert alert-danger" role="alert">Erreur : Certains champs du formulaire de mise à jour sont manquants.</div>';
+    }
+}
+
 ?>

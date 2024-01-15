@@ -1,15 +1,6 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Redis Crud App</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css"
-          integrity="sha384-xOolHFLEh07PJGoPkLv1IbcEPTNtaed2xpHsD9ESMhqIYd0nLMwNLD69Npy4HI+N" crossorigin="anonymous">
-    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
-</head>
-<body>
+<?php
+include 'header.html';
+?>
 <main>
     <div class="container">
         <h1>Redis Crud App</h1>
@@ -70,6 +61,7 @@
                 <th scope="col">Âge</th>
                 <th scope="col">Métier</th>
                 <th scope="col">Email</th>
+                <th scope='col'> Mot de passe</th>
                 <th scope="col">Actions</th>
             </tr>
             </thead>
@@ -77,11 +69,13 @@
             <?php foreach ($userList as $user): ?>
                 <tr>
                     <th scope="row"><?php echo htmlspecialchars($user['id']); ?></th>
+
                     <td><?php echo htmlspecialchars($user['first_name']); ?></td>
                     <td><?php echo htmlspecialchars($user['last_name']); ?></td>
                     <td><?php echo htmlspecialchars($user['age']); ?></td>
                     <td><?php echo htmlspecialchars($user['job']); ?></td>
                     <td><?php echo htmlspecialchars($user['email']); ?></td>
+                    <td><?php echo htmlspecialchars($user['password'])?></td>
                     <td>
                         <form action="traitement.php" method="post">
                             <input type="hidden" name="deleteUserId" value="<?php echo htmlspecialchars($user['id']); ?>">
@@ -95,5 +89,6 @@
         </table>
     </div>
 </main>
-</body>
-</html>
+<?php
+include 'footer.html';
+?>
